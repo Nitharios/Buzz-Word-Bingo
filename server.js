@@ -18,7 +18,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ "extended" : true }));
 // combines req.url with the provided root directory 'public'
 // automatically defaults to index.html
-app.use(express.static('public'));
+app.use(express.static(__dirname + 'public'));
 app.listen(PORT);
 
 // // catch 404 and forward to error handler
@@ -30,8 +30,7 @@ app.listen(PORT);
 
 app.post('/reset', (req, res) => {
   
-  if (!req.body || !req.reset || req.reset !== true) {
-
+  if (!req.body || !req.body.reset || req.body.reset !== 'true') {
     return res.json(invalidAction);
 
   } else {
@@ -55,8 +54,9 @@ app.route('/buzzword')
 
   .post((req, res) => {
 
+
     if (!req.body || !req.body.buzzWord ||
-      !req.body.points || !req.body.heard || req.body.heard !== false)  {
+      !req.body.points || !req.body.heard || req.body.heard !== 'false')  {
       
       return res.json(invalidAction);
     
