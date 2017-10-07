@@ -7,10 +7,10 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const app = express();
 
-let buzzWords = {
-  "buzzWords" : []
-};
+let buzzWordArray = [];
 let score = '';
+
+app.use(bodyParser.urlencoded({"extended" : false}));
 
 app.use(express.static('public'));
 
@@ -20,7 +20,9 @@ app.get('/', (req, res) => {
 }).listen(PORT);
 
 app.get('/buzzwords', (req, res) => {
-  res.send(buzzWords);
+  res.json({
+    'buzzWords' : buzzWordArray
+  });
 });
 
 app.post('/buzzword', (req, res) => {
