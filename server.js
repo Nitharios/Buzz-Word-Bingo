@@ -2,15 +2,22 @@
 const sanity = "You're not crazy!";
 console.log(sanity);
 
-let bodyParser = require('body-parser');
-let express = require('express');
-let app = express();
+const PORT = process.env.PORT || 8888;
+const bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
 
 let buzzWords = {
   "buzzWords" : []
 };
+let score = '';
 
 app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+  console.log('Activity detected');
+  res.send('Hello World!');
+}).listen(PORT);
 
 app.get('/buzzwords', (req, res) => {
   res.send(buzzWords);
@@ -33,7 +40,3 @@ app.delete('/buzzword', (req, res) => {
     "buzzWords" : []
   };
 });
-
-app.get('/', (req, res) => {
-  res. send('Hello World!');
-}).listen(8888);
