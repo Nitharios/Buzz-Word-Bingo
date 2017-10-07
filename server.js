@@ -37,7 +37,7 @@ app.post('/buzzword', (req, res) => {
 
 app.put('/buzzword', (req, res) => {
   for (let i = 0; i < buzzWordArray.length; i++) {
-    if (buzzWordArray[i].buzzword === req.buzzword) {
+    if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
       buzzWordArray[i].heard = true;
       console.log(buzzWordArray);
       res.send({
@@ -52,14 +52,14 @@ app.put('/buzzword', (req, res) => {
 
 app.delete('/buzzword', (req, res) => {
   for (let i = 0; i < buzzWordArray.length; i++) {
-    if (buzzWordArray[i].buzzword === req.buzzword) {
-      buzzWordArray[i].splice(i, 1);
+    if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
+      buzzWordArray.splice(i, 1);
       console.log(buzzWordArray);
-      res.end();
+      res.send({"success" : true});
       return true;
     }
   }  
-
+  res.end();
   return false;
 });
 
