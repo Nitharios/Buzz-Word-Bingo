@@ -37,7 +37,7 @@ app.post('/reset', (req, res) => {
   } else {
 
     buzzWordArray = [];
-
+    score = 0;
     console.log(buzzWordArray);
     // .json is identical to .send but will convert non-objects such as null and undefined, which are invalid as JSON
     // can take advantage of json replacer and json spaces to format JSON
