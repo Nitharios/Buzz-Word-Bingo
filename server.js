@@ -9,10 +9,12 @@ const express = require('express');
 
 const app = express();
 
+const validAction = { "success" : true };
+const invalidAction = { "success" : false };
 let buzzWordArray = [];
-let score = '';
+let score = 0;
 
-app.use(bodyParser.urlencoded({"extended" : false}));
+app.use(bodyParser.urlencoded({ "extended" : false }));
 
 app.use(express.static('public'));
 
@@ -29,25 +31,25 @@ app.get('/buzzwords', (req, res) => {
 
 app.post('/buzzword', (req, res) => {
   buzzWordArray.push(req.body);
-  res.send({
-    "success" : true
-  });
   console.log(buzzWordArray);
+ 
+  res.send(validAction);
 });
 
 app.put('/buzzword', (req, res) => {
   for (let i = 0; i < buzzWordArray.length; i++) {
     if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
       buzzWordArray[i].heard = true;
+      score += Number(buzzWordArray[i].points);
+
       console.log(buzzWordArray);
       res.send({
         "success" : true,
-        "newScore" : 'It works'
+        newScore : score
       });
     }
   }
-  res.end();
-  return false;
+  res.send(invalidAction);
 });
 
 app.delete('/buzzword', (req, res) => {
@@ -55,16 +57,17 @@ app.delete('/buzzword', (req, res) => {
     if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
       buzzWordArray.splice(i, 1);
       console.log(buzzWordArray);
-      res.send({"success" : true});
-      return true;
+
+      res.send(validAction);
     }
   }  
-  res.end();
-  return false;
+  
+  res.send(invalidAction);
 });
 
 app.post('/reset', (req, res) => {
   buzzWords = [];
+
   console.log(buzzWords);
-  res.end();
+  res.send(validAction);
 });
