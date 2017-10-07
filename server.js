@@ -29,12 +29,20 @@ app.listen(PORT);
 // }); 
 
 app.post('/reset', (req, res) => {
-  buzzWordArray = [];
+  
+  if (!req.body || !req.reset || req.reset !== true) {
 
-  console.log(buzzWordArray);
-  // .json is identical to .send but will convert non-objects such as null and undefined, which are invalid as JSON
-  // can take advantage of json replacer and json spaces to format JSON
-  res.json(validAction);
+    return res.json(invalidAction);
+
+  } else {
+
+    buzzWordArray = [];
+
+    console.log(buzzWordArray);
+    // .json is identical to .send but will convert non-objects such as null and undefined, which are invalid as JSON
+    // can take advantage of json replacer and json spaces to format JSON
+    res.json(validAction);
+  }
 });
 
 app.get('/buzzwords', (req, res) => {
@@ -46,55 +54,80 @@ app.get('/buzzwords', (req, res) => {
 app.route('/buzzword')
 
   .post((req, res) => {
-    returnValue = helpers.buzzWordChecker(req, buzzWordArray);
 
-    if (buzzWordArray.length >= 5) {
-      res.json(invalidAction);
+    if (!req.body || !req.body.buzzWord ||
+      !req.body.points || !req.body.heard || req.body.heard !== false)  {
+      
+      return res.json(invalidAction);
     
     } else {
-      if (returnValue !== -1) {
-        res.json(invalidAction);
+      returnValue = helpers.buzzWordChecker(req, buzzWordArray);
 
+      if (buzzWordArray.length >= 5) {
+        res.json(invalidAction);
+      
       } else {
-        buzzWordArray.push(req.body);
-        console.log(buzzWordArray);
-        res.json(validAction);
-      }      
+        if (returnValue !== -1) {
+          res.json(invalidAction);
+
+        } else {
+          buzzWordArray.push(req.body);
+          console.log(buzzWordArray);
+          res.json(validAction);
+        }      
+      }
     }
   })
 
   .put((req, res) => {
-    index = helpers.buzzWordChecker(req, buzzWordArray, true);
 
-    if (index === -1) {
-      res.json({
-        "success" : false,
-        newScore : score
-      });
-
+    if (!req.body || !req.body.buzzWord ||
+      !req.body.heard) {
+      
+      return res.json(invalidAction);
+    
     } else {
-      buzzWordArray[index].heard = true;
-      score += Number(buzzWordArray[index].points);
 
-      console.log(buzzWordArray);
-      res.json({
-        "success" : true,
-        newScore : score
-      });
+      index = helpers.buzzWordChecker(req, buzzWordArray, true);
+
+      if (index === -1) {
+        res.json({
+          "success" : false,
+          newScore : score
+        });
+
+      } else {
+        buzzWordArray[index].heard = true;
+        score += Number(buzzWordArray[index].points);
+
+        console.log(buzzWordArray);
+        res.json({
+          "success" : true,
+          newScore : score
+        });
+      }
     }
   })
 
   .delete((req, res) => {
-    index = helpers.buzzWordChecker(req, buzzWordArray, true);
-    console.log(index);
 
-    if (index === -1) {
-      res.json(invalidAction);
+    if (!req.body || !req.body.buzzWord) {
+
+      return res.json(invalidAction);
 
     } else {
-      buzzWordArray.splice(index, 1);
-      
-      console.log(buzzWordArray);
-      res.json(validAction);
+
+      index = helpers.buzzWordChecker(req, buzzWordArray, true);
+      console.log(index);
+
+      if (index === -1) {
+        res.json(invalidAction);
+
+      } else {
+        buzzWordArray.splice(index, 1);
+        
+        console.log(buzzWordArray);
+        res.json(validAction);
+      }
     }
   });
