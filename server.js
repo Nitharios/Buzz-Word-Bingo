@@ -21,11 +21,20 @@ app.use(bodyParser.urlencoded({ "extended" : false }));
 app.use(express.static('public'));
 app.listen(PORT);
 
+// catch 404 and forward to error handler
+app.use((req, res, next) => {
+  let err = new Error('Not Found!');
+  err.status = 404;
+  next(err);
+}); 
+
 app.post('/reset', (req, res) => {
   buzzWords = [];
 
   console.log(buzzWords);
-  res.send(validAction);
+  // .json is identical to .send but will convert non-objects such as null and undefined, which are invalid as JSON
+  // can take advantage of json replacer and json spaces to format JSON
+  res.json(validAction);
 });
 
 app.get('/buzzwords', (req, res) => {
@@ -40,12 +49,12 @@ app.route('/buzzword')
     returnValue = helpers.buzzWordChecker(req, buzzWordArray);
 
     if (returnValue !== -1) {
-      res.send(invalidAction);
+      res.json(invalidAction);
 
     } else {
       buzzWordArray.push(req.body);
       console.log(buzzWordArray);
-      res.send(validAction);
+      res.json(validAction);
     }
   })
 
@@ -53,7 +62,7 @@ app.route('/buzzword')
     index = helpers.buzzWordChecker(req, buzzWordArray, true);
 
     if (index === -1) {
-      res.send({
+      res.json({
         "success" : false,
         newScore : score
       });
@@ -63,7 +72,7 @@ app.route('/buzzword')
       score += Number(buzzWordArray[index].points);
 
       console.log(buzzWordArray);
-      res.send({
+      res.json({
         "success" : true,
         newScore : score
       });
@@ -75,12 +84,12 @@ app.route('/buzzword')
     console.log(index);
 
     if (index === -1) {
-      res.send(invalidAction);
+      res.json(invalidAction);
 
     } else {
       buzzWordArray.splice(index, 1);
       
       console.log(buzzWordArray);
-      res.send(validAction);
+      res.json(validAction);
     }
   });
