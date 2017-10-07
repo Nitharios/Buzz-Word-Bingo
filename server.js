@@ -13,6 +13,7 @@ const validAction = { "success" : true };
 const invalidAction = { "success" : false };
 let buzzWordArray = [];
 let score = 0;
+let returnValue;
 
 app.use(bodyParser.urlencoded({ "extended" : false }));
 
@@ -38,39 +39,53 @@ app.get('/buzzwords', (req, res) => {
 
 app.route('/buzzword')
   .post((req, res) => {
-    for (let i = 0; i < buzzWordArray.length; i++) {
-      if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
-        return res.send(invalidAction);
-      }
-    }
-    buzzWordArray.push(req.body);
 
-    console.log(buzzWordArray);
-    res.send(validAction);
+    returnValue = helpers.buzzWordChecker(req, buzzWordArray);
+
+    if (returnValue !== -1) {
+      res.send(invalidAction);
+
+    } else {
+      buzzWordArray.push(req.body);
+      console.log(buzzWordArray);
+      res.send(validAction);
+    }
   })
+
   .put((req, res) => {
-    for (let i = 0; i < buzzWordArray.length; i++) {
-      if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
-        buzzWordArray[i].heard = true;
-        score += Number(buzzWordArray[i].points);
 
-        console.log(buzzWordArray);
-        return res.send({
-          "success" : true,
-          newScore : score
-        });
-      }
+    index = helpers.buzzWordChecker(req, buzzWordArray, true);
+
+    if (index === -1) {
+      res.send({
+        "success" : false,
+        newScore : score
+      });
+
+    } else {
+      buzzWordArray[index].heard = true;
+      score += Number(buzzWordArray[index].points);
+
+      console.log(buzzWordArray);
+      res.send({
+        "success" : true,
+        newScore : score
+      });
     }
-    res.send(invalidAction);
   })
+
   .delete((req, res) => {
-    for (let i = 0; i < buzzWordArray.length; i++) {
-      if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
-        buzzWordArray.splice(i, 1);
-        
-        console.log(buzzWordArray);
-        return res.send(validAction);
-      }
-    }    
-    res.send(invalidAction);
+
+    index = helpers.buzzWordChecker(req, buzzWordArray, true);
+    console.log(index);
+
+    if (index === -1) {
+      res.send(invalidAction);
+
+    } else {
+      buzzWordArray.splice(index, 1);
+      
+      console.log(buzzWordArray);
+      res.send(validAction);
+    }
   });
