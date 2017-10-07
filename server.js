@@ -7,22 +7,19 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const helpers = require('./helpers');
 
-const app = express();
-
 const validAction = { "success" : true };
 const invalidAction = { "success" : false };
 let buzzWordArray = [];
 let score = 0;
-let returnValue;
+let index, returnValue;
 
+const app = express();
+// setting value to false forces the value in a key-value pair to be a string or an array
 app.use(bodyParser.urlencoded({ "extended" : false }));
-
+// combines req.url with the provided root directory 'public'
+// automatically defaults to index.html
 app.use(express.static('public'));
-
-app.get('/', (req, res) => {
-  console.log('Activity detected');
-  res.send('Hello World!');
-}).listen(PORT);
+app.listen(PORT);
 
 app.post('/reset', (req, res) => {
   buzzWords = [];
@@ -38,8 +35,8 @@ app.get('/buzzwords', (req, res) => {
 });
 
 app.route('/buzzword')
-  .post((req, res) => {
 
+  .post((req, res) => {
     returnValue = helpers.buzzWordChecker(req, buzzWordArray);
 
     if (returnValue !== -1) {
@@ -53,7 +50,6 @@ app.route('/buzzword')
   })
 
   .put((req, res) => {
-
     index = helpers.buzzWordChecker(req, buzzWordArray, true);
 
     if (index === -1) {
@@ -75,7 +71,6 @@ app.route('/buzzword')
   })
 
   .delete((req, res) => {
-
     index = helpers.buzzWordChecker(req, buzzWordArray, true);
     console.log(index);
 
