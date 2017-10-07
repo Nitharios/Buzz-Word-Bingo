@@ -38,9 +38,14 @@ app.get('/buzzwords', (req, res) => {
 
 app.route('/buzzword')
   .post((req, res) => {
+    for (let i = 0; i < buzzWordArray.length; i++) {
+      if (buzzWordArray[i].buzzWord === req.body.buzzWord) {
+        return res.send(invalidAction);
+      }
+    }
     buzzWordArray.push(req.body);
+
     console.log(buzzWordArray);
-   
     res.send(validAction);
   })
   .put((req, res) => {
