@@ -2,9 +2,11 @@
 const sanity = "You're not crazy!";
 console.log(sanity);
 
-const PORT = process.env.PORT || 8888;
+const PORT = process.env.PORT || 7777;
 const bodyParser = require('body-parser');
 const express = require('express');
+// const helpers = require('./helpers');
+
 const app = express();
 
 let buzzWordArray = [];
@@ -21,24 +23,48 @@ app.get('/', (req, res) => {
 
 app.get('/buzzwords', (req, res) => {
   res.json({
-    'buzzWords' : buzzWordArray
+    'buzzWord' : buzzWordArray
   });
 });
 
 app.post('/buzzword', (req, res) => {
-
-});
-
-app.post('/reset', (req, res) => {
-
+  buzzWordArray.push(req.body);
+  res.send({
+    "success" : true
+  });
+  console.log(buzzWordArray);
 });
 
 app.put('/buzzword', (req, res) => {
-
+  for (let i = 0; i < buzzWordArray.length; i++) {
+    if (buzzWordArray[i].buzzword === req.buzzword) {
+      buzzWordArray[i].heard = true;
+      console.log(buzzWordArray);
+      res.send({
+        "success" : true,
+        "newScore" : 'It works'
+      });
+    }
+  }
+  res.end();
+  return false;
 });
 
 app.delete('/buzzword', (req, res) => {
-  buzzWords = {
-    "buzzWords" : []
-  };
+  for (let i = 0; i < buzzWordArray.length; i++) {
+    if (buzzWordArray[i].buzzword === req.buzzword) {
+      buzzWordArray[i].splice(i, 1);
+      console.log(buzzWordArray);
+      res.end();
+      return true;
+    }
+  }  
+
+  return false;
+});
+
+app.post('/reset', (req, res) => {
+  buzzWords = [];
+  console.log(buzzWords);
+  res.end();
 });
